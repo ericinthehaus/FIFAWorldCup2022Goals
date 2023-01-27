@@ -88,3 +88,27 @@ for(x in y) {
 
 make_goal_treemap(num = 32)
 
+goal_scorers %>%
+  ggplot(mapping=  aes(area= Gls, 
+                       fill= Squad, 
+                       label= Player,
+                       subgroup= reorder(Squad,Gls, max) 
+  )  ) +
+  geom_treemap(color="gray0") +
+  theme(
+    text = element_text(color= "gray90"),
+    plot.background = element_rect(fill = "gray0"),
+    plot.title = element_text(color= "gray90", size=18),
+    legend.position = "none"
+  ) +
+  labs(
+    title  = "All goals, grouped by team",
+    #    subtitle = 
+    fill = "Player",
+    caption = "Data from FBRef.com"
+  ) +
+  geom_treemap_text(fontface = "italic", colour = "white",
+                    place = "bottom", grow = TRUE, reflow = TRUE)
+
+
+

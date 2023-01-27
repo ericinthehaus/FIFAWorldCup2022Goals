@@ -143,6 +143,7 @@ all_plt <- goal_scorers %>%
                       place = "bottom", grow = TRUE, reflow = TRUE)
 
 all_plt
+save(all_plt, file="All goals WC22.png", )
 
 
 ```
