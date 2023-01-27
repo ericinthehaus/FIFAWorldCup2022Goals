@@ -118,7 +118,7 @@ for (x in y ) {
 ## All goalscorers
 ```{r all-goals, fig.height=12, fig.width=10}
 
-goal_scorers %>%
+all_plt <- goal_scorers %>%
     ggplot(mapping=  aes(area= Gls, 
                          fill= Squad, 
                          label= Player,
@@ -132,13 +132,15 @@ goal_scorers %>%
       legend.position = "none"
     ) +
     labs(
-      title  = "All teams, grouped by team",
+      title  = "All goals, grouped by team",
   #    subtitle = 
       fill = "Player",
       caption = "Data from FBRef.com"
     ) +
     geom_treemap_text(fontface = "italic", colour = "white",
                       place = "bottom", grow = TRUE, reflow = TRUE)
+
+all_plt
 
 
 ```
