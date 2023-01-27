@@ -40,15 +40,16 @@ goal_scorers <- raw_data %>%
   separate_wider_delim(Squad, delim=" ", names=c(NA, "Squad"), too_many = "merge" )
 
 teams_list <- goal_scorers %>%
+    slice_head(n=12) %>%
   select(Squad) %>%
   unique()
 
 
-make_goal_treemap <- function( num=1) {
+make_goal_treemap <- function( name= "France") {
   
-  team <- teams_list$Squad[num]
+ # team <- teams_list$Squad[num]
   goal_scorers %>%
-    filter(Squad== team) %>%
+    filter(Squad== name) %>%
     ggplot(mapping=  aes(area= Gls, fill= reorder(Player, Gls, sum), label= Player )  ) +
     geom_treemap() +
     theme(
@@ -58,7 +59,7 @@ make_goal_treemap <- function( num=1) {
       legend.position = "none"
     ) +
     labs(
-      title  = team,
+      title  = name,
   #    subtitle = 
       fill = "Player",
       caption = "Data from FBRef.com"
@@ -101,14 +102,15 @@ shiny::renderPlot({
 ```
 
 
-## Top 12 teams in total goals scored:
+## Top 12 goalscorers and their teams:
 ```{r plot-10-teams, fig.height=2, fig.width=2}
 
 x=1
-y=1:12
+y= teams_list$Squad
+
 
 for (x in y ) {
-      print ( make_goal_treemap(num = x)+theme(plot.caption = element_blank()) )
+      print ( make_goal_treemap(name = x)+theme(plot.caption = element_blank()) )
 }
 
 
