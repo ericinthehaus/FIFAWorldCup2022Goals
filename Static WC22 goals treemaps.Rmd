@@ -1,0 +1,146 @@
+---
+title: "Treemaps of World Cup goalscorers"
+author: "Eric Hausken"
+date: "1/26/2023"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+
+
+library(tidyverse)
+library(treemapify)
+library(shiny)
+library(tidyr)
+
+raw_data <- read.csv("WCGoalsData.csv")
+
+# source = "https://fbref.com/en/comps/1/shooting/World-Cup-Stats"
+
+
+```
+
+```{r data-function-setup}
+
+goal_scorers <- raw_data %>%
+  filter(Gls>0) %>%
+  select(
+    Player, Squad, Gls
+  ) %>%
+  separate_wider_delim(Squad, delim=" ", names=c(NA, "Squad"), too_many = "merge" )
+
+teams_list <- goal_scorers %>%
+  select(Squad) %>%
+  unique()
+
+
+make_goal_treemap <- function( num=1) {
+  
+  team <- teams_list$Squad[num]
+  goal_scorers %>%
+    filter(Squad== team) %>%
+    ggplot(mapping=  aes(area= Gls, fill= reorder(Player, Gls, sum), label= Player )  ) +
+    geom_treemap() +
+    theme(
+      text = element_text(color= "gray90"),
+      plot.background = element_rect(fill = "gray0"),
+      plot.title = element_text(color= "gray90", size=18),
+      legend.position = "none"
+    ) +
+    labs(
+      title  = team,
+  #    subtitle = 
+      fill = "Player",
+      caption = "Data from FBRef.com"
+    ) +
+    geom_treemap_text(fontface = "italic", colour = "white",
+                      place = "bottom", grow = TRUE, reflow = TRUE)
+  
+}
+
+```
+
+
+```{r eval=FALSE, include=FALSE}
+
+selectInput("teamname",
+            "", teams_list)
+
+shiny::renderPlot({
+  goal_scorers %>%
+    filter(Squad== input$teamname) %>%
+    ggplot(mapping=  aes(area= Gls, fill= reorder(Player, Gls, sum), label= Player )  ) +
+    geom_treemap() +
+    theme(
+      text = element_text(color= "gray90"),
+      plot.background = element_rect(fill = "gray0"),
+      plot.title = element_text(color= "gray90", size=18),
+      legend.position = "none"
+    ) +
+    labs(
+      title  = input$teamname,
+  #    subtitle = 
+      fill = "Player",
+      caption = "Data from FBRef.com"
+    ) +
+    geom_treemap_text(fontface = "italic", colour = "white",
+                      place = "bottom", grow = TRUE)
+})
+
+
+```
+
+
+## Top 12 teams in total goals scored:
+```{r plot-10-teams, fig.height=2, fig.width=2}
+
+x=1
+y=1:12
+
+for (x in y ) {
+      print ( make_goal_treemap(num = x)+theme(plot.caption = element_blank()) )
+}
+
+
+```
+
+
+## All goalscorers
+```{r all-goals, fig.height=12, fig.width=10}
+
+goal_scorers %>%
+    ggplot(mapping=  aes(area= Gls, 
+                         fill= Squad, 
+                         label= Player,
+                         subgroup= reorder(Squad,Gls, max) 
+                         )  ) +
+    geom_treemap(color="gray0") +
+    theme(
+      text = element_text(color= "gray90"),
+      plot.background = element_rect(fill = "gray0"),
+      plot.title = element_text(color= "gray90", size=18),
+      legend.position = "none"
+    ) +
+    labs(
+      title  = "All teams, grouped by team",
+  #    subtitle = 
+      fill = "Player",
+      caption = "Data from FBRef.com"
+    ) +
+    geom_treemap_text(fontface = "italic", colour = "white",
+                      place = "bottom", grow = TRUE, reflow = TRUE)
+
+
+```
+
+
