@@ -137,13 +137,22 @@ all_plt <- goal_scorers %>%
       title  = "All goals, grouped by team",
   #    subtitle = 
       fill = "Player",
-      caption = "Data from FBRef.com"
+      caption = "Chart created by Eric Hausken | Data from FBRef.com"
     ) +
     geom_treemap_text(fontface = "italic", colour = "white",
                       place = "bottom", grow = TRUE, reflow = TRUE)
 
 all_plt
-save(all_plt, file="All goals WC22.png", )
+# save(all_plt, file="All goals WC22.png", )
+ggsave("All goals WC22.png", 
+       height = 1280,
+       width = 1280,
+       units = "px")
+ggsave("All goals WC22.jpg", 
+       height = 1280,
+       width = 1280,
+       units = "px")
+
 
 
 ```
